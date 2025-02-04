@@ -30,8 +30,25 @@
                 <div id="github-star" class="col-md-1">
                     <a class="github-button" href="https://github.com/obsidiandynamics/kafdrop" data-show-count="false"
                        aria-label="Star Kafdrop on GitHub" data-color-scheme="dark">Star</a>
+
+                    <!-- Display user email and logout button -->
+                    <div style="position: relative; display: inline-block;">
+                      <!-- Clickable email to open dropdown -->
+                      <h5 onclick="toggleDropdown()" style="cursor: pointer;"><b><i>${userEmail}</b></i></h5>
+
+                      <!-- Dropdown content with the logout option -->
+                      <div id="dropdown-content" style="display: none; position: absolute; background-color: #2F2F2F; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); z-index: 1;">
+                        <form action="/logout" method="POST">
+                         <button type="submit" style="padding: 12px 16px; border: none; background-color: #2F2F2F; color: white; cursor: pointer; border-radius: 6px; border: 1px solid white;"><b>Logout</b></button>
+                        </form>
+                      </div>
+                    </div>
                 </div>
                 <script>
+                    function toggleDropdown() {
+                       const dropdown = document.getElementById('dropdown-content');
+                       dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+                    }
                     $(document).ready(function(){
                         setTimeout(function() { restyle(0); });
                     });

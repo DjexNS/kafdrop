@@ -71,6 +71,7 @@ public final class TopicController {
 
     final var topic = kafkaMonitor.getTopic(topicName)
       .orElseThrow(() -> new TopicNotFoundException(topicName));
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("topic", topic);
     model.addAttribute("consumers", kafkaMonitor.getConsumersByTopics(Collections.singleton(topic)));
     model.addAttribute("topicDeleteEnabled", topicDeleteEnabled);
@@ -83,6 +84,7 @@ public final class TopicController {
   @PostMapping(value = "/{name:.+}/delete")
   public String deleteTopic(@PathVariable("name") String topicName, Model model) {
     if (!topicDeleteEnabled) {
+      model.addAttribute("userEmail", ClusterController.userEmail);
       model.addAttribute("deleteErrorMessage", "Not configured to be deleted.");
       return topicDetails(topicName, model);
     }
@@ -91,6 +93,7 @@ public final class TopicController {
       kafkaMonitor.deleteTopic(topicName);
       return "redirect:/";
     } catch (Exception ex) {
+      model.addAttribute("userEmail", ClusterController.userEmail);
       model.addAttribute("deleteErrorMessage", ex.getMessage());
       return topicDetails(topicName, model);
     }
@@ -104,6 +107,7 @@ public final class TopicController {
    */
   @RequestMapping("/create")
   public String createTopicPage(Model model) {
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("topicCreateEnabled", topicCreateEnabled);
     model.addAttribute("brokersCount", kafkaMonitor.getBrokers().size());
     return "topic-create";
@@ -148,9 +152,11 @@ public final class TopicController {
   @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Success")})
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
   public String createTopic(CreateTopicVO createTopicVO, Model model) {
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("topicCreateEnabled", topicCreateEnabled);
     model.addAttribute("topicName", createTopicVO.getName());
     if (!topicCreateEnabled) {
+
       model.addAttribute("errorMessage", "Not configured to be created.");
       return createTopicPage(model);
     }
@@ -163,3 +169,4 @@ public final class TopicController {
     return "topic-create";
   }
 }
+

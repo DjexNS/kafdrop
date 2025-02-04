@@ -46,6 +46,7 @@ public final class BrokerController {
 
   @RequestMapping("/broker/{id}")
   public String brokerDetails(@PathVariable("id") int brokerId, Model model) {
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("broker", kafkaMonitor.getBroker(brokerId)
       .orElseThrow(() -> new BrokerNotFoundException("No such broker " + brokerId)));
     model.addAttribute("topics", kafkaMonitor.getTopics());

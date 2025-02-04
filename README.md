@@ -456,3 +456,19 @@ To cut an official release, these are the steps:
 2. You can then edit the release description in GitHub to describe what went into the release.
 
 3. After the release goes through successfully, you need to prepare the repo for the next version, which requires committing the next snapshot version on master again. So we should increment the minor version and add again the `-SNAPSHOT` suffix.
+
+# Docker build and security
+
+## Building image
+
+1. Copy the contents of the docker folder to the folder above, so that the kafdrop repo is in the same folder as the Dockerfile, start.sh and nosec folder
+
+2. Run command <b>docker build -t user/name:tag .</b>
+
+## ENV VARS
+
+- To run Kafdrop from the created container, the only required environment variable is KAFKA_BROKERCONNECT
+
+- To start with Kaycloak oidc logging, it is necessary to define variables KEYCLOAK_PROVIDER, CLIENT_ID and CLIENT_SECRET 
+
+- If the KEYCLOAK_PROVIDER variable is not defined or is an empty string, the container starts normally, without security

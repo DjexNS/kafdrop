@@ -29,11 +29,14 @@ import kafdrop.model.TopicVO;
 import kafdrop.service.BrokerNotFoundException;
 import kafdrop.service.BuildInfo;
 import kafdrop.service.KafkaMonitor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,6 +54,9 @@ import java.util.stream.Collectors;
 @Tag(name = "cluster-controller", description = "Cluster Controller")
 @Controller
 public final class ClusterController {
+
+  public static String userEmail = "";
+
   private final KafkaConfiguration kafkaConfiguration;
 
   private final KafkaMonitor kafkaMonitor;
@@ -60,7 +66,7 @@ public final class ClusterController {
   private final boolean topicCreateEnabled;
 
   public ClusterController(KafkaConfiguration kafkaConfiguration, KafkaMonitor kafkaMonitor,
-                           ObjectProvider<BuildInfo> buildInfoProvider,
+                           @NotNull ObjectProvider<BuildInfo> buildInfoProvider,
                            @Value("${topic.createEnabled:true}") Boolean topicCreateEnabled) {
     this.kafkaConfiguration = kafkaConfiguration;
     this.kafkaMonitor = kafkaMonitor;
@@ -78,9 +84,18 @@ public final class ClusterController {
     return new BuildProperties(properties);
   }
 
+
+
+
   @RequestMapping("/")
-  public String clusterInfo(Model model,
+  public String clusterInfo(Model model, @AuthenticationPrincipal OAuth2User oauth2User,
                             @RequestParam(value = "filter", required = false) String filter) {
+    if (oauth2User != null) {
+      String name = oauth2User.getAttribute("given_name");
+      String lname = oauth2User.getAttribute("family_name");
+      ClusterController.userEmail = name + " " + lname;
+    }
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("bootstrapServers", kafkaConfiguration.getBrokerConnect());
     model.addAttribute("buildProperties", buildProperties);
 
@@ -121,6 +136,7 @@ public final class ClusterController {
 
   @ExceptionHandler(BrokerNotFoundException.class)
   public String brokerNotFound(Model model) {
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("brokers", Collections.emptyList());
     model.addAttribute("topics", Collections.emptyList());
     return "cluster-overview";

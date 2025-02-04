@@ -24,7 +24,24 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: kafdrop
+            client-secret: upmbA9uWdyU3FMHw1CKpeXFDBySHhA06
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid, profile, email
+            authorization-uri: http://localhost:8321/realms/delta-inspira/protocol/openid-connect/auth
+            token-uri: http://localhost:8321/realms/delta-inspira/protocol/openid-connect/token
+            user-info-uri: http://localhost:8321/realms/delta-inspira/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8321/realms/delta-inspira/protocol/openid-connect/certs
+            logout-uri: http://localhost:8321/realms/delta-inspira/protocol/openid-connect/logout
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8321/realms/delta-inspira
 management:
   endpoints:
     web:

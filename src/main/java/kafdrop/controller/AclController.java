@@ -45,7 +45,9 @@ public final class AclController {
   @RequestMapping("/acl")
   public String acls(Model model) {
     final var acls = kafkaMonitor.getAcls();
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("acls", acls);
+    model.addAttribute("userEmail", ClusterController.userEmail);
     return "acl-overview";
   }
 

@@ -45,7 +45,7 @@ public final class ConsumerController {
   @RequestMapping("/{groupId:.+}")
   public String consumerDetail(@PathVariable("groupId") String groupId, Model model) throws ConsumerNotFoundException {
     final var consumer = kafkaMonitor.getConsumersByGroup(groupId).stream().findAny();
-
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("consumer", consumer.orElseThrow(() -> new ConsumerNotFoundException(groupId)));
     return "consumer-detail";
   }

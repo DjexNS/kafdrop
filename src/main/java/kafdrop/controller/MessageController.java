@@ -32,6 +32,7 @@ import kafdrop.config.MessageFormatConfiguration.MessageFormatProperties;
 import kafdrop.config.ProtobufDescriptorConfiguration.ProtobufDescriptorProperties;
 import kafdrop.config.SchemaRegistryConfiguration.SchemaRegistryProperties;
 import kafdrop.form.SearchMessageForm;
+import kafdrop.model.CreateMessageVO;
 import kafdrop.model.MessageVO;
 import kafdrop.model.TopicPartitionVO;
 import kafdrop.model.TopicVO;
@@ -52,13 +53,6 @@ import kafdrop.util.MsgPackMessageSerializer;
 import kafdrop.util.ProtobufMessageDeserializer;
 import kafdrop.util.ProtobufMessageSerializer;
 import kafdrop.util.ProtobufSchemaRegistryMessageDeserializer;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-
 import kafdrop.util.Serializers;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.http.MediaType;
@@ -68,13 +62,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import kafdrop.model.CreateMessageVO;
+import java.util.List;
 
 @Tag(name = "message-controller", description = "Message Controller")
 @Controller
@@ -115,7 +111,7 @@ public final class MessageController {
     final MessageFormat defaultKeyFormat = messageFormatProperties.getKeyFormat();
     final TopicVO topic = kafkaMonitor.getTopic(topicName)
       .orElseThrow(() -> new TopicNotFoundException(topicName));
-
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("topic", topic);
     model.addAttribute("defaultFormat", defaultFormat);
     model.addAttribute("defaultKeyFormat", defaultKeyFormat);
@@ -169,7 +165,6 @@ public final class MessageController {
       defaultForm.setFormat(defaultFormat);
       defaultForm.setKeyFormat(defaultKeyFormat);
       defaultForm.setIsAnyProto(protobufProperties.getParseAnyProto());
-
       model.addAttribute("messageForm", defaultForm);
     }
 
@@ -179,7 +174,7 @@ public final class MessageController {
     // pre-select a descriptor file for a specific topic if available
     model.addAttribute("defaultDescFile", protobufProperties.getDescFilesList().stream()
       .filter(descFile -> descFile.replace(".desc", "").equals(topicName)).findFirst().orElse(""));
-
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("defaultFormat", defaultFormat);
     model.addAttribute("messageFormats", MessageFormat.values());
     model.addAttribute("defaultKeyFormat", defaultKeyFormat);
@@ -235,14 +230,14 @@ public final class MessageController {
       defaultForm.setPartition(body.getTopicPartition());
       defaultForm.setFormat(defaultFormat);
       defaultForm.setKeyFormat(defaultFormat);
-
+      model.addAttribute("userEmail", ClusterController.userEmail);
       model.addAttribute("messageForm", defaultForm);
 
       final TopicVO topic = kafkaMonitor.getTopic(topicName)
         .orElseThrow(() -> new TopicNotFoundException(topicName));
 
       model.addAttribute("topic", topic);
-
+      model.addAttribute("userEmail", ClusterController.userEmail);
       model.addAttribute("defaultFormat", defaultFormat);
       model.addAttribute("messageFormats", MessageFormat.values());
       model.addAttribute("defaultKeyFormat", defaultKeyFormat);
@@ -288,12 +283,13 @@ public final class MessageController {
       defaultForm.setPartition(-1);
       defaultForm.setMaximumCount(100);
       defaultForm.setStartTimestamp(new Date(0));
-      model.addAttribute("searchMessageForm", defaultForm);
+
     }
 
     final TopicVO topic = kafkaMonitor.getTopic(topicName)
       .orElseThrow(() -> new TopicNotFoundException(topicName));
-
+    model.addAttribute("userEmail", ClusterController.userEmail);
+    model.addAttribute("userEmail", ClusterController.userEmail);
     model.addAttribute("topic", topic);
     model.addAttribute("defaultFormat", defaultFormat);
     model.addAttribute("messageFormats", MessageFormat.values());
