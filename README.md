@@ -461,9 +461,9 @@ To cut an official release, these are the steps:
 
 ## Building image
 
-1. Copy the contents of the docker folder to the folder above, so that the kafdrop repo is in the same folder as the Dockerfile, start.sh and nosec folder
+1. CD into kafdrop folder
 
-2. Run command <b>docker build -t user/name:tag .</b>
+2. Run command <b>docker build . -t djexns/kafdrop:latest -f docker/Dockerfile</b>
 
 ## ENV VARS
 

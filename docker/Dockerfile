@@ -4,11 +4,11 @@ RUN apt-get update -y && apt-get upgrade -y
 
 RUN apt-get install maven -y
 
-ADD start.sh /
+ADD docker/start.sh /
 
-ADD kafdrop /kafdrop
+ADD . /kafdrop
 
-ADD nosec /nosec
+ADD docker/nosec /nosec
 
 RUN chmod +x /start.sh
 
